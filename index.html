@@ -32,8 +32,8 @@
   --tn:#c4b5fd;--tnm:#7c5cbf;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{font-family:var(--fb);background:var(--bg);color:var(--t1);overflow-x:hidden;line-height:1.65}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;height:100%}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);overflow-x:hidden;line-height:1.65;min-height:100%}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--v0)}::-webkit-scrollbar-thumb{background:rgba(124,58,237,0.3);border-radius:3px}
 h1,h2,h3,h4{font-family:var(--fh);line-height:1.22}
 h1{font-size:clamp(1.45rem,2.2vw,2.3rem);font-weight:800}
@@ -156,7 +156,7 @@ button,input,select,textarea{font-family:var(--fb)}
 
 /* MAIN PAGES */
 .main{margin-left:var(--sw);min-height:100vh;display:flex;flex-direction:column}
-.page{display:none;flex:1;flex-direction:column;animation:fadeUp .3s ease}
+.page{display:none;flex:1;flex-direction:column;animation:fadeUp .3s ease;min-height:100vh}
 .page.on{display:flex}
 @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 
@@ -660,6 +660,23 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
 .dash-alerts-col{display:flex;flex-direction:column;gap:12px}
 .dp-panel-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap}
 
+/* ── SOURCE ATTRIBUTION MOBILE CARDS (base) ── */
+/* Desktop default: show table, hide cards */
+.attr-mob-cards{display:none}
+.attr-tbl-desktop{display:block}
+/* Card component styles */
+.amc-row{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);padding:11px 12px;margin-bottom:7px;transition:all .2s}
+.amc-row:hover{border-color:var(--pur-b);background:var(--vb)}
+.amc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.amc-ch{font-family:var(--fh);font-size:.76rem;font-weight:700;color:var(--t1);line-height:1.3;flex:1;min-width:0}
+.amc-stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-bottom:8px}
+.amc-stat{display:flex;flex-direction:column;gap:2px}
+.amc-lbl{font-family:var(--fm);font-size:.5rem;color:var(--tf);text-transform:uppercase;letter-spacing:.07em}
+.amc-val{font-family:var(--fh);font-size:.78rem;font-weight:700;color:var(--t1)}
+.amc-conf{margin-top:0}
+.amc-total{background:var(--vb);border:1px solid var(--pur-b);border-radius:var(--r);padding:11px 12px;margin-top:2px}
+.amc-total .amc-stats{margin-bottom:0}
+
 /* ── RESPONSIVE ──────────────────────────────────────────────── */
 
 /* ── Mid-desktop 901px–1200px: sidebar stays, content breathes ── */
@@ -688,7 +705,8 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
   /* Layout chrome */
   .sb{transform:translateX(-100%)}.sb.mob-op{transform:translateX(0)}
   .m-top{display:flex}.m-bot{display:flex}
-  .main{margin-left:0;padding-top:58px;padding-bottom:72px}
+  .main{margin-left:0;padding-top:58px;padding-bottom:0}
+  .footer{padding-bottom:calc(72px + 18px)}
   .topbar{display:none}
 
   /* Sections */
@@ -727,23 +745,103 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
   .hiw-s h4{font-size:.7rem}
   .hiw-s p{font-size:.62rem}
 
-  /* Dashboard KPI row */
-  .dash-g4{grid-template-columns:1fr 1fr;gap:10px}
+  /* ── DASHBOARD: full mobile overhaul (≤900px) ── */
+
+  /* Dashboard page section padding */
+  #page-dashboard .sec{padding:18px 13px 10px}
+
+  /* Header row: stack title + badges */
+  #page-dashboard .sec > div:first-child{flex-direction:column;align-items:flex-start;gap:10px}
+  #page-dashboard .sec > div:first-child > div:last-child{flex-wrap:wrap;gap:6px;width:100%}
+  #page-dashboard .sec > div:first-child > div:last-child > div{font-size:.5rem;padding:5px 10px}
+
+  /* CI Banner: 3-col → 2-col, smaller values */
+  .ci-bnr{padding:13px}
+  .ci-bnr-g{grid-template-columns:repeat(3,1fr);gap:7px}
+  .ci-sv{font-size:1rem}
+  .ci-sl{font-size:.52rem}
+  .ci-bnr-lbl{font-size:.42rem;margin-bottom:8px}
+
+  /* KPI cards: 2-col, tighter */
+  .dash-g4{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .dash-stat{padding:13px}
+  .ds-v{font-size:1.3rem}
+  .ds-lbl{font-size:.6rem}
+  .ds-chg{font-size:.55rem}
+  .ds-spark{height:22px;margin-top:6px}
+
+  /* Dashboard row layouts */
   .dash-row2{grid-template-columns:1fr}
   .dash-row3{grid-template-columns:1fr 1fr}
   .d-panel{padding:14px}
+  .dp-hd{font-size:.78rem}
+  .dp-sub{font-size:.61rem;margin-bottom:10px}
 
-  /* CI Banner */
-  .ci-bnr-g{grid-template-columns:repeat(3,1fr);gap:8px}
-  .ci-bnr{padding:16px}
-  .ci-sv{font-size:1.1rem}
-  .ci-sl{font-size:.54rem}
+  /* Source attribution: swap table → cards on mobile */
+  .attr-tbl-desktop{display:none}
+  .attr-mob-cards{display:block}
 
   /* ── SOURCE ATTRIBUTION BREAKDOWN ──
      dash-attr-row stacks: table left / alerts+feed right → each full width */
   .dash-attr-row{grid-template-columns:1fr}
   /* attr-tbl already has min-width:560px so it scrolls horizontally — fine */
   .attr-tbl,.cr-tbl{font-size:.66rem}
+
+  /* COCP alerts panel */
+  .dash-alerts-col{gap:10px}
+  .cocp-panel .dp-panel-hd{gap:6px}
+  .alr-i{padding:9px 10px;gap:8px}
+  .alr-ic{width:26px;height:26px}
+  .alr-title{font-size:.73rem;line-height:1.28}
+  .alr-desc{font-size:.65rem;line-height:1.48}
+  .alr-ts{font-size:.56rem}
+
+  /* COCP badge */
+  .cocp-panel .dp-panel-hd span{font-size:.42rem;padding:2px 6px}
+
+  /* Activity feed */
+  .act-feed{gap:5px}
+  .act-i{padding:8px 9px;gap:7px}
+  .act-msg{font-size:.71rem;line-height:1.42}
+  .act-ts{font-size:.56rem}
+
+  /* Creator leaderboard panel */
+  .cr-tbl-w{border-radius:var(--r)}
+  .cr-tbl{font-size:.62rem;min-width:600px}
+  .cr-tbl thead th{font-size:.5rem;padding:6px 7px}
+  .cr-tbl td{padding:7px 7px}
+  .cr-av{width:22px;height:22px;font-size:.54rem;border-radius:6px}
+
+  /* Revenue pipeline + Platform progress: stack */
+  .dash-rev-row{grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+  /* MRR inline 2-col mini grid inside rev panel */
+  .dash-rev-row .d-panel > div[style*="grid-template-columns:1fr 1fr"]{gap:6px}
+  .rev-rw{padding:8px 10px}
+  .r-nm{font-size:.74rem}
+  .r-st{font-size:.6rem}
+  .r-vl{font-size:.9rem}
+
+  /* Progress bars */
+  .pp-item{margin-bottom:8px}
+  .pp-nm{font-size:.69rem}
+  .pp-pc{font-size:.61rem}
+
+  /* Charts row: already handled by ch2 → 1-col at 900px */
+  .ch-p{padding:16px}
+  .ch-title{font-size:.8rem}
+  .ch-sub{font-size:.63rem;margin-bottom:10px}
+  .ch-can{height:155px}
+
+  /* DP panel-hd: always wrap on mobile */
+  .dp-panel-hd{flex-wrap:wrap;gap:7px;margin-bottom:8px}
+  .dp-panel-hd > div:first-child{flex:1;min-width:0}
+  .dp-panel-hd > div:last-child,.dp-panel-hd > span{flex-shrink:0}
+
+  /* CI Banner */
+  .ci-bnr-g{grid-template-columns:repeat(3,1fr);gap:8px}
+  .ci-bnr{padding:16px}
+  .ci-sv{font-size:1.1rem}
+  .ci-sl{font-size:.54rem}
 
   /* ── COCP OPERATIONAL ALERTS ── */
   .alr-i{padding:10px 11px;gap:9px}
@@ -869,6 +967,14 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
   /* dashboard row3: stack */
   .dash-row3{grid-template-columns:1fr}
 
+  /* ── DASHBOARD ≤660px ── */
+  #page-dashboard .ci-bnr-g{grid-template-columns:repeat(2,1fr);gap:8px}
+  .attr-tbl{min-width:460px;font-size:.59rem}
+  .cr-tbl{min-width:540px;font-size:.59rem}
+  .cocp-panel .dp-panel-hd{flex-direction:column;align-items:flex-start;gap:4px}
+  .ds-v{font-size:1.2rem}
+  .rev-rw{padding:7px 9px}
+
   /* pricing: 1-col already from 900px rule, fine */
 
   /* demo pipeline: 2 items per row */
@@ -916,12 +1022,36 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
   .dash-g4{grid-template-columns:1fr 1fr}
   .dash-row3{grid-template-columns:1fr}
 
+  /* ── DASHBOARD ≤480px ── */
+  /* KPI cards: keep 2-col, tighten padding */
+  .dash-stat{padding:11px}
+  .ds-v{font-size:1.1rem}
+  .ds-lbl{font-size:.57rem}
+  /* CI banner: 2-col */
+  #page-dashboard .ci-bnr-g{grid-template-columns:repeat(2,1fr)}
+  .ci-sv{font-size:.9rem}
+  /* Panel padding */
+  .d-panel{padding:12px}
+  /* Alert items */
+  .alr-title{font-size:.7rem}
+  .alr-desc{font-size:.62rem}
+  /* Progress bar labels */
+  .pp-nm{font-size:.66rem}
+  /* Chart height */
+  .ch-can{height:138px}
+  /* dashboard header badges: wrap & smaller */
+  #page-dashboard .sec > div:first-child > div:last-child > div{font-size:.46rem;padding:4px 8px}
+
   /* demo */
   .pipe-step{flex:0 0 calc(50% - 5px)}
   .df-key{width:75px;font-size:.51rem}
 
   /* pricing */
   .price-g{grid-template-columns:1fr}
+
+  /* Attribution mobile cards: 2-col stats at 480px */
+  .amc-stats{grid-template-columns:1fr 1fr}
+  .amc-ch{font-size:.71rem}
 
   /* misc */
   .found-c{padding:16px}
@@ -939,6 +1069,16 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
   .hiw-g{grid-template-columns:1fr}
   .ci-bnr-g{grid-template-columns:1fr 1fr}
   .dash-g4{grid-template-columns:1fr}
+
+  /* ── DASHBOARD ≤360px ── */
+  .dash-stat{padding:10px}
+  .ds-v{font-size:1rem}
+  #page-dashboard .ci-bnr-g{grid-template-columns:1fr 1fr}
+  .ci-sv{font-size:.85rem}
+  .d-panel{padding:10px}
+  .attr-tbl{min-width:400px;font-size:.56rem}
+  .cr-tbl{min-width:480px;font-size:.56rem}
+  .ch-can{height:120px}
   .tabs{flex-direction:column}
   .tab-btn{width:100%;text-align:center}
 }
@@ -1272,7 +1412,8 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
             <div><div class="dp-hd">Source Attribution Breakdown</div><div class="dp-sub">Revenue attributed per acquisition channel &mdash; live 8-week pilot</div></div>
             <div style="display:flex;gap:5px"><span class="pill pg" style="font-size:.54rem">Live</span><span class="pill pv" style="font-size:.54rem">ML Scored</span></div>
           </div>
-          <div class="attr-tbl-w">
+          <!-- DESKTOP TABLE (hidden on mobile) -->
+          <div class="attr-tbl-w attr-tbl-desktop">
           <table class="attr-tbl">
             <thead><tr><th>Channel</th><th>Revenue</th><th>Covers</th><th>Avg Spend</th><th>ML Score</th><th>Confidence</th><th>Status</th></tr></thead>
             <tbody>
@@ -1285,6 +1426,69 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
             </tbody>
           </table>
           </div><!-- /.attr-tbl-w -->
+
+          <!-- MOBILE CARDS (shown only on mobile ≤900px) -->
+          <div class="attr-mob-cards">
+            <div class="amc-row">
+              <div class="amc-top"><span class="amc-ch">TikTok &mdash; @LondonFoodGuide</span><span class="pill pg" style="font-size:.52rem">Rising</span></div>
+              <div class="amc-stats">
+                <div class="amc-stat"><span class="amc-lbl">Revenue</span><span class="amc-val" style="color:var(--ok)">&pound;5,240</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Covers</span><span class="amc-val">52</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Avg Spend</span><span class="amc-val">&pound;100.77</span></div>
+                <div class="amc-stat"><span class="amc-lbl">ML Score</span><span class="amc-val" style="color:var(--ok)">A+ 94</span></div>
+              </div>
+              <div class="amc-conf"><span class="amc-lbl">Confidence</span><div style="display:flex;align-items:center;gap:7px;margin-top:3px"><div class="conf-bar" style="flex:1"><div class="conf-fi" style="width:88%"></div></div><span style="font-family:var(--fm);font-size:.58rem;color:var(--v3);flex-shrink:0">88%</span></div></div>
+            </div>
+            <div class="amc-row">
+              <div class="amc-top"><span class="amc-ch">Instagram &mdash; Friday Campaign</span><span class="pill pv" style="font-size:.52rem">Stable</span></div>
+              <div class="amc-stats">
+                <div class="amc-stat"><span class="amc-lbl">Revenue</span><span class="amc-val" style="color:var(--ok)">&pound;4,260</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Covers</span><span class="amc-val">34</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Avg Spend</span><span class="amc-val">&pound;125.29</span></div>
+                <div class="amc-stat"><span class="amc-lbl">ML Score</span><span class="amc-val" style="color:var(--v4)">A 78</span></div>
+              </div>
+              <div class="amc-conf"><span class="amc-lbl">Confidence</span><div style="display:flex;align-items:center;gap:7px;margin-top:3px"><div class="conf-bar" style="flex:1"><div class="conf-fi" style="width:76%"></div></div><span style="font-family:var(--fm);font-size:.58rem;color:var(--v3);flex-shrink:0">76%</span></div></div>
+            </div>
+            <div class="amc-row">
+              <div class="amc-top"><span class="amc-ch">Google Maps &mdash; Weekend</span><span class="pill pv" style="font-size:.52rem">Stable</span></div>
+              <div class="amc-stats">
+                <div class="amc-stat"><span class="amc-lbl">Revenue</span><span class="amc-val" style="color:var(--v4)">&pound;3,180</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Covers</span><span class="amc-val">29</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Avg Spend</span><span class="amc-val">&pound;109.65</span></div>
+                <div class="amc-stat"><span class="amc-lbl">ML Score</span><span class="amc-val" style="color:var(--ind)">B+ 66</span></div>
+              </div>
+              <div class="amc-conf"><span class="amc-lbl">Confidence</span><div style="display:flex;align-items:center;gap:7px;margin-top:3px"><div class="conf-bar" style="flex:1"><div class="conf-fi" style="width:62%"></div></div><span style="font-family:var(--fm);font-size:.58rem;color:var(--v3);flex-shrink:0">62%</span></div></div>
+            </div>
+            <div class="amc-row">
+              <div class="amc-top"><span class="amc-ch">TikTok &mdash; Viral Post #2</span><span class="pill pw" style="font-size:.52rem">Low quality</span></div>
+              <div class="amc-stats">
+                <div class="amc-stat"><span class="amc-lbl">Revenue</span><span class="amc-val" style="color:var(--warn)">&pound;2,340</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Covers</span><span class="amc-val">28</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Avg Spend</span><span class="amc-val">&pound;83.57</span></div>
+                <div class="amc-stat"><span class="amc-lbl">ML Score</span><span class="amc-val" style="color:var(--warn)">C 48</span></div>
+              </div>
+              <div class="amc-conf"><span class="amc-lbl">Confidence</span><div style="display:flex;align-items:center;gap:7px;margin-top:3px"><div class="conf-bar" style="flex:1"><div class="conf-fi" style="width:54%;background:linear-gradient(90deg,var(--warn),#fbbf24)"></div></div><span style="font-family:var(--fm);font-size:.58rem;color:var(--warn);flex-shrink:0">54%</span></div></div>
+            </div>
+            <div class="amc-row">
+              <div class="amc-top"><span class="amc-ch">Organic &mdash; Word of Mouth</span><span class="pill pgr" style="font-size:.52rem">Declining</span></div>
+              <div class="amc-stats">
+                <div class="amc-stat"><span class="amc-lbl">Revenue</span><span class="amc-val" style="color:var(--tm)">&pound;1,900</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Covers</span><span class="amc-val">18</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Avg Spend</span><span class="amc-val">&pound;105.55</span></div>
+                <div class="amc-stat"><span class="amc-lbl">ML Score</span><span class="amc-val" style="color:var(--tf)">D 32</span></div>
+              </div>
+              <div class="amc-conf"><span class="amc-lbl">Confidence</span><div style="display:flex;align-items:center;gap:7px;margin-top:3px"><div class="conf-bar" style="flex:1"><div class="conf-fi" style="width:41%;background:linear-gradient(90deg,var(--ind),#818cf8)"></div></div><span style="font-family:var(--fm);font-size:.58rem;color:var(--tm);flex-shrink:0">41%</span></div></div>
+            </div>
+            <!-- Total row -->
+            <div class="amc-total">
+              <div class="amc-stats">
+                <div class="amc-stat"><span class="amc-lbl">Total Revenue</span><span class="amc-val" style="color:var(--ok);font-size:.92rem">&pound;16,920</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Total Covers</span><span class="amc-val" style="font-size:.92rem">161</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Avg Spend</span><span class="amc-val">&pound;105.09</span></div>
+                <div class="amc-stat"><span class="amc-lbl">Uplift</span><span class="amc-val"><span class="pill pg" style="font-size:.52rem">+22%</span></span></div>
+              </div>
+            </div>
+          </div><!-- /.attr-mob-cards -->
         </div>
         <div class="dash-alerts-col">
           <!-- COCP ALERT PANEL -->
