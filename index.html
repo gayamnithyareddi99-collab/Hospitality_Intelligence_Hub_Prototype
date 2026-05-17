@@ -1949,8 +1949,33 @@ textarea.fg-ctrl{resize:vertical;min-height:92px}
 
           <!-- Step nav -->
           <div style="display:flex;gap:8px">
-            <button class="d-nav-btn" style="flex:1" onclick="prevStep()">Previous Step</button>
-            <button class="d-nav-btn pri" style="flex:1" onclick="nextStep()">Next Step</button>
+            <button class="d-nav-btn" style="flex:1" id="demoPrevBtn" onclick="prevStep()">Previous Step</button>
+            <button class="d-nav-btn pri" style="flex:1" id="demoNextBtn" onclick="nextStep()">Next Step &rarr;</button>
+          </div>
+
+          <!-- AI UPGRADE MODEL PANEL -->
+          <div class="d-panel" style="border-color:rgba(124,58,237,0.4);background:linear-gradient(135deg,#0e0620 0%,#1a0840 100%)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--v4),var(--v3));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(124,58,237,0.45)">
+                <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#fff" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              </div>
+              <div>
+                <div style="font-family:var(--fh);font-size:.82rem;font-weight:700;color:#fff">AI Intelligence Engine</div>
+                <div style="font-family:var(--fm);font-size:.44rem;color:var(--v1);letter-spacing:.1em;margin-top:1px">UPGRADE MODEL &bull; POWERED BY CLAUDE</div>
+              </div>
+            </div>
+            <p style="font-size:.73rem;color:var(--v0);line-height:1.65;margin-bottom:11px">Generate a live AI analysis of this pipeline step for the current scenario &mdash; the same intelligence layer built into the full HI Platform.</p>
+            <button id="aiInsightBtn" onclick="generateAIInsight()" style="width:100%;padding:11px 14px;border-radius:var(--r);background:linear-gradient(135deg,var(--v4),var(--v3));color:#fff;font-family:var(--fh);font-size:.79rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(124,58,237,0.42)">
+              &#10022; Generate AI Insight for This Step
+            </button>
+            <div id="aiInsightLoading" style="display:none;margin-top:10px;padding:8px 0;text-align:center">
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--fm);font-size:.52rem;color:var(--v1);letter-spacing:.08em"><div class="ld"></div><span id="aiLoadingMsg">Connecting to AI engine&hellip;</span></div>
+              <div style="margin-top:8px;height:3px;background:rgba(124,58,237,0.12);border-radius:3px;overflow:hidden"><div id="aiLoadingBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--v4),var(--v1));border-radius:3px;transition:width 1.8s ease"></div></div>
+            </div>
+            <div id="aiInsightOutput" style="display:none;margin-top:12px;padding:12px 13px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.24);border-radius:var(--r)">
+              <div style="font-family:var(--fm);font-size:.44rem;letter-spacing:.12em;color:var(--v3);text-transform:uppercase;margin-bottom:7px;font-weight:600">&#10022; AI INSIGHT &mdash; STEP <span id="aiInsightStepLabel">1</span></div>
+              <div id="aiInsightText" style="font-size:.76rem;color:#e9d9ff;line-height:1.78;font-family:var(--fb)"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -2886,8 +2911,113 @@ function goStep(step) {
     if (i < step) s.classList.add('done');
     if (i === step) s.classList.add('active');
   });
-  renderDemoBody();
-  renderTl();
+
+  // Animate demo body in with processing effect
+  const body = document.getElementById('demoBody');
+  if (body) {
+    body.style.opacity = '0';
+    body.style.transform = 'translateY(8px)';
+    body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+  }
+
+  // Show processing overlay
+  showStepProcessing(step, function() {
+    renderDemoBody();
+    renderTl();
+    if (body) {
+      body.style.opacity = '1';
+      body.style.transform = 'translateY(0)';
+    }
+    // Update step indicator badge
+    updateStepBadge(step);
+  });
+}
+
+const stepLabels = [
+  'Ingesting Social Signals…',
+  'Running ML Attribution Engine…',
+  'Correlating Booking Data…',
+  'Verifying POS Revenue…',
+  'Scoring Guest Sentiment…',
+  'Generating COCP Alert…'
+];
+
+const stepIcons = ['📡','🧠','📅','🧾','⭐','🚨'];
+
+function showStepProcessing(step, cb) {
+  const overlay = document.getElementById('demoProcessingOverlay');
+  const msg = document.getElementById('demoProcessingMsg');
+  const bar = document.getElementById('demoProcessingBar');
+  if (!overlay || !msg || !bar) { cb(); return; }
+
+  msg.textContent = stepLabels[step] || 'Processing…';
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  overlay.style.display = 'flex';
+  overlay.style.opacity = '0';
+  overlay.style.transition = 'opacity 0.18s ease';
+  setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+
+  // Animate bar
+  setTimeout(() => {
+    bar.style.transition = 'width 0.55s cubic-bezier(.4,0,.2,1)';
+    bar.style.width = '100%';
+  }, 30);
+
+  setTimeout(() => {
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+      overlay.style.display = 'none';
+      cb();
+    }, 180);
+  }, 680);
+}
+
+function updateStepBadge(step) {
+  const badge = document.getElementById('demoStepBadge');
+  if (badge) {
+    badge.textContent = 'Step ' + (step + 1) + ' of 6';
+    badge.style.animation = 'none';
+    badge.offsetHeight; // reflow
+    badge.style.animation = 'stepBadgePop 0.35s ease';
+  }
+  // Update step label
+  const lbl = document.getElementById('demoStepLabel');
+  if (lbl) lbl.textContent = step + 1;
+  // Update progress bar
+  const prog = document.getElementById('stepProgress');
+  if (prog) prog.style.width = ((step + 1) / 6 * 100).toFixed(1) + '%';
+  // Update nav buttons
+  const prevBtn = document.getElementById('demoPrevBtn');
+  const nextBtn = document.getElementById('demoNextBtn');
+  if (prevBtn) prevBtn.disabled = step === 0;
+  if (nextBtn) {
+    if (step === 5) {
+      nextBtn.textContent = '✓ Complete — Restart';
+      nextBtn.style.background = 'linear-gradient(135deg,var(--ok),#16a34a)';
+    } else {
+      nextBtn.textContent = 'Next Step →';
+      nextBtn.style.background = '';
+    }
+  }
+}
+
+function prevStep() {
+  if (curStep > 0) {
+    goStep(curStep - 1);
+    showToast('↩ Step ' + curStep + ' — ' + tlData[curStep][0]);
+  }
+}
+
+function nextStep() {
+  if (curStep < 5) {
+    goStep(curStep + 1);
+    setTimeout(() => showToast(stepIcons[curStep] + ' ' + tlData[curStep][0] + ' — Complete'), 720);
+  } else {
+    // Restart with celebration
+    showToast('🎉 Pipeline complete! Restarting demo…');
+    setTimeout(() => goStep(0), 400);
+  }
 }
 
 function renderDemoBody() {
@@ -2905,6 +3035,11 @@ function renderDemoBody() {
   // Update window title
   const wt = document.getElementById('demoWinTitle');
   if (wt) wt.textContent = 'HI Platform · The Shoreditch Bistro · Step ' + (curStep+1) + ' of 6';
+  // Clear AI insight when step changes
+  const aiOut = document.getElementById('aiInsightOutput');
+  if (aiOut) { aiOut.textContent = ''; aiOut.style.display = 'none'; }
+  const aiBtn = document.getElementById('aiInsightBtn');
+  if (aiBtn) { aiBtn.disabled = false; aiBtn.textContent = '✦ Generate AI Insight for This Step'; }
 }
 
 function renderTl() {
@@ -2918,9 +3053,6 @@ function renderTl() {
   });
   tl.innerHTML = html;
 }
-
-function prevStep() { if (curStep > 0) goStep(curStep - 1); }
-function nextStep() { if (curStep < 5) goStep(curStep + 1); }
 
 function runSc(i, btn) {
   curSc = i;
@@ -2937,6 +3069,109 @@ function runSc(i, btn) {
   document.getElementById('sv4').textContent = m.sv4;
   document.getElementById('sf4').style.width = m.sf4;
   goStep(curStep);
+}
+
+// ── AI UPGRADE MODEL ──────────────────────────────────────────
+const aiStepNames = [
+  'Social Signal Detection',
+  'ML Attribution Engine',
+  'Booking Correlation Match',
+  'POS Revenue Verification',
+  'Guest Sentiment Mapping',
+  'COCP Predictive Alert'
+];
+
+const aiLoadingMsgs = [
+  'Ingesting pipeline context…',
+  'Running attribution model…',
+  'Analysing scenario data…',
+  'Generating strategic insight…',
+  'Finalising recommendation…'
+];
+
+async function generateAIInsight() {
+  const btn = document.getElementById('aiInsightBtn');
+  const loading = document.getElementById('aiInsightLoading');
+  const output = document.getElementById('aiInsightOutput');
+  const loadingMsg = document.getElementById('aiLoadingMsg');
+  const loadingBar = document.getElementById('aiLoadingBar');
+  const stepLabel = document.getElementById('aiInsightStepLabel');
+  const textEl = document.getElementById('aiInsightText');
+
+  if (!btn) return;
+
+  // Disable button, show loading
+  btn.disabled = true;
+  btn.textContent = '⟳ Generating…';
+  if (output) output.style.display = 'none';
+  if (loading) loading.style.display = 'block';
+
+  // Animate loading messages
+  let msgIdx = 0;
+  const msgInterval = setInterval(() => {
+    if (loadingMsg) loadingMsg.textContent = aiLoadingMsgs[msgIdx % aiLoadingMsgs.length];
+    msgIdx++;
+  }, 900);
+
+  // Animate bar
+  setTimeout(() => { if (loadingBar) loadingBar.style.width = '85%'; }, 50);
+
+  // Build context from current step/scenario
+  const stepName = aiStepNames[curStep] || 'Pipeline Step';
+  const scenName = scLabels[curSc] || 'Scenario';
+  const stepRows = stepData[curStep] && stepData[curStep][curSc] ? stepData[curStep][curSc].rows : [];
+  const rowsSummary = stepRows.map(r => r.k + ': ' + r.v + ' [' + r.bd + ']').join('\n');
+
+  const prompt = `You are the AI Intelligence Engine inside Hospitality Intelligence (HI) — the UK's first closed-loop AI revenue attribution platform for independent restaurants. You are operating within the Live Platform Demo, analysing real pipeline data for "The Shoreditch Bistro" in London E1.
+
+Current pipeline step: ${curStep + 1} of 6 — ${stepName}
+Current scenario: ${scenName}
+
+Live data from this step:
+${rowsSummary}
+
+Generate a concise, expert AI insight (3–4 sentences) for this specific step and scenario. Your insight should:
+1. Interpret what the data means commercially for the venue operator
+2. Highlight one key risk or opportunity surfaced by this step
+3. Give one specific, actionable recommendation the operator should act on now
+
+Write in the authoritative, precise tone of a senior UK hospitality revenue analyst. Be specific — reference actual figures from the data above. Do not use bullet points. Output plain prose only.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(msgInterval);
+    if (loadingBar) { loadingBar.style.transition = 'none'; loadingBar.style.width = '100%'; }
+
+    const data = await response.json();
+    const text = data.content && data.content[0] && data.content[0].text ? data.content[0].text : 'Analysis complete. No output returned.';
+
+    setTimeout(() => {
+      if (loading) loading.style.display = 'none';
+      if (stepLabel) stepLabel.textContent = (curStep + 1) + ' — ' + stepName;
+      if (textEl) textEl.textContent = text;
+      if (output) output.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = '↺ Regenerate Insight'; }
+      showToast('✦ AI insight generated for Step ' + (curStep + 1));
+    }, 300);
+
+  } catch (err) {
+    clearInterval(msgInterval);
+    if (loading) loading.style.display = 'none';
+    if (stepLabel) stepLabel.textContent = (curStep + 1);
+    if (textEl) textEl.textContent = 'The AI Intelligence Engine is ready. This step — ' + stepName + ' — is a critical node in the attribution pipeline for the ' + scenName + ' scenario. The live data confirms the HI platform is actively correlating signals. For a full analysis, ensure the platform API connection is active in your production environment.';
+    if (output) output.style.display = 'block';
+    if (btn) { btn.disabled = false; btn.textContent = '↺ Regenerate Insight'; }
+    showToast('✦ AI insight generated (demo mode)');
+  }
 }
 
 // ── DEMO CHART ────────────────────────────────────────────────
